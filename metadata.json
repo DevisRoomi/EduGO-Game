@@ -1,0 +1,6 @@
+{
+  "name": "Lari Pintar 3D — Balapan Edukasi SD",
+  "description": "Game balapan edukasi 3D interaktif dengan Three.js untuk anak SD kelas 4–6. Mendukung multiplayer lokal, multiplayer beda perangkat (kode ruang), dan bank soal custom guru via spreadsheet.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
