@@ -484,9 +484,36 @@ export class RaceEngine {
     };
   }
 
+  private disposeHierarchy(obj: THREE.Object3D): void {
+    obj.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        if (mesh.geometry) {
+          mesh.geometry.dispose();
+        }
+        if (mesh.material) {
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m) => {
+            if (!m) return;
+            const anyMat = m as any;
+            if (anyMat.map && typeof anyMat.map.dispose === 'function') anyMat.map.dispose();
+            if (anyMat.lightMap && typeof anyMat.lightMap.dispose === 'function') anyMat.lightMap.dispose();
+            if (anyMat.bumpMap && typeof anyMat.bumpMap.dispose === 'function') anyMat.bumpMap.dispose();
+            if (anyMat.normalMap && typeof anyMat.normalMap.dispose === 'function') anyMat.normalMap.dispose();
+            if (anyMat.specularMap && typeof anyMat.specularMap.dispose === 'function') anyMat.specularMap.dispose();
+            if (anyMat.envMap && typeof anyMat.envMap.dispose === 'function') anyMat.envMap.dispose();
+            m.dispose();
+          });
+        }
+      }
+    });
+  }
+
   private clearGroup(g: THREE.Group): void {
     while (g.children.length > 0) {
-      g.remove(g.children[0]);
+      const child = g.children[0];
+      g.remove(child);
+      this.disposeHierarchy(child);
     }
   }
 
