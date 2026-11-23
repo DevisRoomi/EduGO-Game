@@ -29,7 +29,11 @@ export default defineConfig(() => {
             if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
               return 'react-vendor';
             }
-            if (id.includes('node_modules/lucide-react') || id.includes('node_modules/qrcode')) {
+            if (
+              id.includes('node_modules/lucide-react') ||
+              id.includes('node_modules/qrcode') ||
+              id.includes('node_modules/peerjs')
+            ) {
               return 'ui-vendor';
             }
           },
