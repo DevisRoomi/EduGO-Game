@@ -261,36 +261,57 @@ async function startServer(): Promise<void> {
         '- Berikan penjelasan singkat (1 kalimat) untuk review siswa di akhir balapan.',
       ].join('\n');
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
-        contents: promptText,
-        config: {
-          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              questions: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    prompt: { type: Type.STRING },
-                    options: {
-                      type: Type.ARRAY,
-                      items: { type: Type.STRING },
+      const candidateModels = process.env.GEMINI_MODEL
+        ? [process.env.GEMINI_MODEL]
+        : ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+
+      let response: any = null;
+      let lastError: any = null;
+
+      for (const model of candidateModels) {
+        try {
+          response = await ai.models.generateContent({
+            model,
+            contents: promptText,
+            config: {
+              thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+              responseMimeType: 'application/json',
+              responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                  questions: {
+                    type: Type.ARRAY,
+                    items: {
+                      type: Type.OBJECT,
+                      properties: {
+                        prompt: { type: Type.STRING },
+                        options: {
+                          type: Type.ARRAY,
+                          items: { type: Type.STRING },
+                        },
+                        correctIndex: { type: Type.INTEGER },
+                        explanation: { type: Type.STRING },
+                      },
+                      required: ['prompt', 'options', 'correctIndex', 'explanation'],
                     },
-                    correctIndex: { type: Type.INTEGER },
-                    explanation: { type: Type.STRING },
                   },
-                  required: ['prompt', 'options', 'correctIndex', 'explanation'],
                 },
+                required: ['questions'],
               },
             },
-            required: ['questions'],
-          },
-        },
-      });
+          });
+          if (response && response.text) {
+            break;
+          }
+        } catch (err: any) {
+          lastError = err;
+          console.warn(`Server: Model ${model} failed, trying next candidate...`, err?.message || err);
+        }
+      }
+
+      if (!response || !response.text) {
+        throw lastError || new Error('All candidate models failed to respond.');
+      }
 
       const rawText = response.text;
       if (!rawText) {
