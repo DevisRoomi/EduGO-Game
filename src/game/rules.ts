@@ -78,10 +78,136 @@ export interface PaceMetrics {
   questionPreviewDistance: number;
 }
 
+export const SPEED_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+
+export function getPaceLevelNumber(pace: PaceLevel): number {
+  if (pace === 'santai') return 3;
+  if (pace === 'normal') return 5;
+  if (pace === 'cepat') return 8;
+  const num = parseInt(pace.replace('level', ''), 10);
+  return Number.isFinite(num) && num >= 1 && num <= 10 ? num : 5;
+}
+
+export function getPaceFromLevel(lvl: number): PaceLevel {
+  const clamped = Math.max(1, Math.min(10, Math.round(lvl)));
+  return `level${clamped}` as PaceLevel;
+}
+
 export const PACE_CONFIGS: Record<PaceLevel, PaceMetrics> = {
+  level1: {
+    id: 'level1',
+    label: 'Level 1 · Super Santai',
+    hint: 'Sangat pelan · ~8,8 detik per soal (Pemula)',
+    baseSpeed: 7.5,
+    firstGateZ: 56,
+    gateSpacing: 68,
+    finishBuffer: 42,
+    roundDurationSec: 135,
+    questionPreviewDistance: 58,
+  },
+  level2: {
+    id: 'level2',
+    label: 'Level 2 · Santai Pemula',
+    hint: 'Lari santai · ~8,0 detik per soal',
+    baseSpeed: 8.0,
+    firstGateZ: 55,
+    gateSpacing: 66,
+    finishBuffer: 41,
+    roundDurationSec: 130,
+    questionPreviewDistance: 57,
+  },
+  level3: {
+    id: 'level3',
+    label: 'Level 3 · Santai Nyaman',
+    hint: 'Santai nyaman · ~7,5 detik per soal (Kelas 1–3)',
+    baseSpeed: 8.6,
+    firstGateZ: 54,
+    gateSpacing: 64,
+    finishBuffer: 40,
+    roundDurationSec: 125,
+    questionPreviewDistance: 56,
+  },
+  level4: {
+    id: 'level4',
+    label: 'Level 4 · Pelan Teratur',
+    hint: 'Pelan sedang · ~6,4 detik per soal',
+    baseSpeed: 9.6,
+    firstGateZ: 53,
+    gateSpacing: 61,
+    finishBuffer: 39,
+    roundDurationSec: 118,
+    questionPreviewDistance: 53,
+  },
+  level5: {
+    id: 'level5',
+    label: 'Level 5 · Normal Seimbang',
+    hint: 'Standar seimbang · ~5,5 detik per soal',
+    baseSpeed: 10.6,
+    firstGateZ: 52,
+    gateSpacing: 58,
+    finishBuffer: 38,
+    roundDurationSec: 110,
+    questionPreviewDistance: 50,
+  },
+  level6: {
+    id: 'level6',
+    label: 'Level 6 · Sedang Gesit',
+    hint: 'Sedikit menantang · ~4,8 detik per soal',
+    baseSpeed: 11.4,
+    firstGateZ: 50,
+    gateSpacing: 55,
+    finishBuffer: 36,
+    roundDurationSec: 104,
+    questionPreviewDistance: 48,
+  },
+  level7: {
+    id: 'level7',
+    label: 'Level 7 · Cepat Tanggap',
+    hint: 'Lari cepat · ~4,2 detik per soal',
+    baseSpeed: 12.4,
+    firstGateZ: 48,
+    gateSpacing: 52,
+    finishBuffer: 35,
+    roundDurationSec: 96,
+    questionPreviewDistance: 46,
+  },
+  level8: {
+    id: 'level8',
+    label: 'Level 8 · Gesit Kilat',
+    hint: 'Tantangan kilat · ~3,8 detik per soal',
+    baseSpeed: 13.4,
+    firstGateZ: 46,
+    gateSpacing: 50,
+    finishBuffer: 34,
+    roundDurationSec: 90,
+    questionPreviewDistance: 44,
+  },
+  level9: {
+    id: 'level9',
+    label: 'Level 9 · Super Kilat',
+    hint: 'Refleks juara · ~3,2 detik per soal',
+    baseSpeed: 14.6,
+    firstGateZ: 44,
+    gateSpacing: 46,
+    finishBuffer: 32,
+    roundDurationSec: 84,
+    questionPreviewDistance: 42,
+  },
+  level10: {
+    id: 'level10',
+    label: 'Level 10 · Turbo Juara',
+    hint: 'Kecepatan puncak · ~2,7 detik per soal (Ekstrem)',
+    baseSpeed: 16.0,
+    firstGateZ: 42,
+    gateSpacing: 43,
+    finishBuffer: 30,
+    roundDurationSec: 76,
+    questionPreviewDistance: 40,
+  },
+  // Aliases for backward compatibility
   santai: {
     id: 'santai',
-    label: 'Santai',
+    label: 'Level 3 · Santai',
     hint: 'Lari pelan · ~7,5 detik per soal (cocok Kelas 1–3)',
     baseSpeed: 8.6,
     firstGateZ: 54,
@@ -92,7 +218,7 @@ export const PACE_CONFIGS: Record<PaceLevel, PaceMetrics> = {
   },
   normal: {
     id: 'normal',
-    label: 'Normal',
+    label: 'Level 5 · Normal',
     hint: 'Seimbang · ~5,5 detik per soal (nyaman dibaca)',
     baseSpeed: 10.6,
     firstGateZ: 52,
@@ -103,7 +229,7 @@ export const PACE_CONFIGS: Record<PaceLevel, PaceMetrics> = {
   },
   cepat: {
     id: 'cepat',
-    label: 'Cepat',
+    label: 'Level 8 · Cepat',
     hint: 'Tantangan kilat · ~3,8 detik per soal',
     baseSpeed: 13.4,
     firstGateZ: 46,

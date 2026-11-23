@@ -1,6 +1,19 @@
 export type GradeLevel = 'kelas1' | 'kelas2' | 'kelas3' | 'kelas4' | 'kelas56';
 
-export type PaceLevel = 'santai' | 'normal' | 'cepat';
+export type PaceLevel =
+  | 'santai'
+  | 'normal'
+  | 'cepat'
+  | 'level1'
+  | 'level2'
+  | 'level3'
+  | 'level4'
+  | 'level5'
+  | 'level6'
+  | 'level7'
+  | 'level8'
+  | 'level9'
+  | 'level10';
 
 export type WorldTheme = 'taman' | 'pantai' | 'salju' | 'angkasa';
 

@@ -86,10 +86,10 @@ function parseValidGrade(raw: string | null): GradeLevel {
 }
 
 function parseValidPace(raw: string | null): PaceLevel {
-  if (raw === 'santai' || raw === 'normal' || raw === 'cepat') {
-    return raw;
+  if (raw && raw in PACE_CONFIGS) {
+    return raw as PaceLevel;
   }
-  return 'normal';
+  return 'level5';
 }
 
 function parseValidWorld(raw: string | null): WorldTheme {
